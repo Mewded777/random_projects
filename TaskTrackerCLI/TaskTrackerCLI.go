@@ -1,7 +1,7 @@
 package main
 
 // JSON which stands for JavaScript Object Notation is often used to transmit data between a server and a web application as text.
-// In this exercise, the json is used as a simple database to store tasks for a task tracker CLI application.
+// the json here is used as a simple database to store tasks for a task tracker CLI application.
 import (
 	"encoding/json"
 	"fmt"
