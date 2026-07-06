@@ -5,8 +5,14 @@ Core ArchitectureData Structure: It maps tasks into a Task struct tracking a uni
 
 Storage Mechanism: The data is encoded to/from JSON (json.MarshalIndent/json.Unmarshal) and read or written directly to the file system using Go's os library.
 
-Supported CLI Commandsadd: Saves a new task into the JSON file with an auto-incrementing ID. 
-The default status is set to todo.list: Prints out saved tasks. 
+Supported CLI Commands
+
+add: Saves a new task into the JSON file with an auto-incrementing ID. 
+
+The default status is set to todo.
+
+list: Prints out saved tasks.
+
 If you provide an extra status modifier (e.g., todo), it filters out everything else.
 
 update: Locates a specific task by its numerical ID, edits its description, and refreshes its modification timestamp.
