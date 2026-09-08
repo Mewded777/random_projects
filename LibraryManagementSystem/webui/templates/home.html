@@ -1,0 +1,92 @@
+{{define "content"}}
+<div class="home-header">
+    <div>
+        <h1>⚡ Library Catalog</h1>
+        <small>Signed in as: <strong>{{.CurrentUser}}</strong></small>
+    </div>
+    <form method="POST" action="/logout">
+        <button type="submit" class="logout-btn">Logout</button>
+    </form>
+</div>
+
+<form method="GET" action="/" class="filter-form"
+    style="display:flex; gap: 0.75rem; align-items: end; margin-bottom: 1rem; flex-wrap: wrap;">
+    <div class="form-group">
+        <label for="filter-genre">Genre</label>
+        <select id="filter-genre" name="genre">
+            <option value="">All genres</option>
+            {{range .Genres}}
+            <option value="{{.}}" {{if eq . $.SelectedGenre}}selected{{end}}>{{.}}</option>
+            {{end}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="filter-language">Language</label>
+        <select id="filter-language" name="language">
+            <option value="">All languages</option>
+            {{range .Languages}}
+            <option value="{{.}}" {{if eq . $.SelectedLang}}selected{{end}}>{{.}}</option>
+            {{end}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="filter-author">Author</label>
+        <input type="text" id="filter-author" name="author" placeholder="Search by author" value="{{.SelectedAuthor}}">
+    </div>
+    <button type="submit">Filter</button>
+    {{if or .SelectedGenre .SelectedAuthor .SelectedLang}}
+    <a href="/">Clear filters</a>
+    {{end}}
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Language</th>
+            <th>Genre</th>
+            <th>Availability</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Books}}
+        <tr>
+            <td>{{.Title}}</td>
+            <td>{{.Author}}</td>
+            <td>{{.Language}}</td>
+            <td>{{.Genre}}</td>
+            <td>
+                {{if gt .Available 0}}
+                <span class="badge badge-available">{{.Available}} / {{.Copies}} available</span>
+                {{else}}
+                <span class="badge badge-unavailable">None available</span>
+                {{end}}
+            </td>
+            <td>
+                {{if eq $.CurrentRole "member"}}
+                <form class="inline" method="POST" action="/borrow">
+                    <input type="hidden" name="bookId" value="{{.ID}}">
+                    <input type="hidden" name="memberId" value="{{$.CurrentMemberID}}">
+                    <button type="submit" {{if le .Available 0}}disabled{{end}}>Borrow</button>
+                </form>
+                {{else}}
+                <a href="/admin/dashboard">Manage in dashboard</a>
+                {{end}}
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="6">No books available in the catalog.</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{if eq .CurrentRole "member"}}
+<div style="margin-top: 1rem;">
+    <p>Note: The catalog displays only books that are currently available for borrowing.</p>
+    <p>To view your current loans, Click <a href="/members/{{.CurrentMemberID}}/loans">Here</a>.</p>
+</div>
+{{end}}
+{{end}}

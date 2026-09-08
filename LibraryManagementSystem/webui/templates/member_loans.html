@@ -1,0 +1,52 @@
+{{define "content"}}
+<h1>{{.Member.Name}}'s Loans</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <!--  Hide header if the user is not a Member -->
+            {{if eq .CurrentRole "member"}}
+            <th>Action</th>
+            {{end}}
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Loans}}
+        <tr>
+            <td>{{.BookTitle}}</td>
+            <td>{{.DueDate}}</td>
+            <td>
+                {{if .Returned}}
+                <span class="badge badge-returned">Returned</span>
+                {{else}}
+                <span class="badge badge-available">Active</span>
+                {{end}}
+            </td>
+            <!--  Hide actions if the user is not a Member -->
+            {{if eq $.CurrentRole "member"}}
+            <td>
+                {{if not .Returned}}
+                <form class="inline" method="POST" action="/loans/{{.ID}}/return">
+                    <input type="hidden" name="memberId" value="{{$.CurrentMemberID}}">
+                    <button type="submit">Return</button>
+                </form>
+                {{end}}
+            </td>
+            {{end}}
+        </tr>
+        {{else}}
+        <tr>
+            {{if eq .CurrentRole "member"}}
+            <td colspan="4">
+                {{else}}
+            <td colspan="3">
+                {{end}}
+                This member currently has no book loans.
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+{{end}}

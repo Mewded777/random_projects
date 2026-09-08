@@ -1,0 +1,25 @@
+{{define "content"}}
+<div class="login-container">
+    <h2 class="login-title">Library Sign In</h2>
+
+    <form method="POST" action="/login">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+
+        <i>Dont have an account yet?</i>
+        <div class="form-group">
+            <a href="/register">Register</a>
+        </div>
+    </form>
+</div>
+
+{{end}}

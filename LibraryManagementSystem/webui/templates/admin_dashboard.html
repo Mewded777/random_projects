@@ -1,0 +1,108 @@
+{{define "content"}}
+<!-- Flash Alerts placed at the top for immediate visibility -->
+{{if .Flash}}
+<div class="flash" style="margin-top: 1rem; margin-bottom: 1rem;">{{.Flash}}</div>
+{{end}}
+
+<div class="dashboard-header">
+    <div>
+        <h1>⚡ Admin Central Console</h1>
+        <small>Account clearance level: <strong>{{.CurrentUser}}</strong></small>
+    </div>
+    <form method="POST" action="/logout">
+        <button type="submit" class="logout-btn">Logout</button>
+    </form>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Titles in Catalog</h3>
+        <p>{{.Metrics.TotalBooks}}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Registered Members</h3>
+        <p>{{.Metrics.TotalMembers}}</p>
+    </div>
+</div>
+
+<h2>Members</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Member Name</th>
+            <th>ID Reference</th>
+            <th>Active Loans</th>
+            <th>Returned History</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Metrics.MemberStatuses}}
+        <tr>
+            <td><strong>{{.Member.Name}}</strong></td>
+            <td><code>{{.Member.ID}}</code></td>
+            <td><span
+                    class="badge {{if gt .ActiveLoans 0}}badge-unavailable{{else}}badge-returned{{end}}">{{.ActiveLoans}}
+                    active</span></td>
+            <td><span class="badge badge-available">{{.ReturnedCount}} books</span></td>
+            <td>
+                <!-- Action form to remove a member -->
+                <form method="POST" action="/admin/members/delete" style="display:inline;">
+                    <input type="hidden" name="memberId" value="{{.Member.ID}}">
+                    <button type="submit" class="delete-btn"
+                        style="background: #b3261e; color: white; border: none; padding: 4px 8px; cursor: pointer;">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="5">No member activity recorded in system logs.</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
+<h3>Librarians</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Librarian Name</th>
+            <th>ID Reference</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range .Metrics.AdminStatuses}}
+        <tr>
+            <td><strong>{{.Admin.Username}}</strong></td>
+            <td><code>{{.Admin.Username}}</code></td>
+            <td>
+                <!-- Action form to remove a librarian -->
+                <form method="POST" action="/super/admins/delete" style="display:inline;">
+                    <input type="hidden" name="adminId" value="{{.Admin.Username}}">
+                    <button type="submit" class="delete-btn"
+                        style="background: #b3261e; color: white; border: none; padding: 4px 8px; cursor: pointer;">Remove</button>
+                </form>
+            </td>
+        </tr>
+        {{else}}
+        <tr>
+            <td colspan="3">No librarian activity recorded in system logs.</td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+
+<!-- Dedicated Super Admin Controls Container -->
+<div class="admin-panel" style="margin-top: 3rem; background: #fffdf5; border: 1px solid #fbe69e; padding: 1rem;">
+    <h4 style="color: #b3261e; margin-top: 0;">Management Controls</h4>
+    <p>Register a new Librarian account to manage the system.</p>
+
+    <form class="inline" method="POST" action="/super/admins/create">
+        <input type="text" name="username" placeholder="New Librarian Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" style="background: #1b2733; color: white;">Register Librarian</button>
+    </form>
+</div>
+
+{{end}}
